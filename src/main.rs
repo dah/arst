@@ -1,5 +1,7 @@
 use clap::Parser;
 use serde::{Deserialize, Serialize};
+use std::fs::File;
+use std::io::Read;
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Point {
@@ -28,4 +30,12 @@ fn main() {
 
     let deserialised: Point = serde_json::from_str(&serialised).unwrap();
     println!("deserialised = {:?}", deserialised);
+
+    //let poem = fs::read_to_string(Path::new("~/.config/arst/poem.txt")).expect("Couldn't read any file.");
+
+    let mut file = File::open("~/.config/arst/poem.txt").expect("Couldn't Open File");
+    let mut poem = String::new();
+    file.read_to_string(&mut poem)
+        .expect("Unable to read contents");
+    println!("Poem: \n\n{}", poem);
 }
