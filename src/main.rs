@@ -1,7 +1,7 @@
 use clap::Parser;
 use serde::{Deserialize, Serialize};
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 
 #[derive(Serialize, Deserialize, Debug)]
 struct Point {
@@ -23,7 +23,6 @@ fn main() {
     for _ in 0..args.count {
         println!("Hello {}!", args.name);
     }
-
     let point = Point { x: 1, y: 2 };
     let serialised = serde_json::to_string(&point).unwrap();
     println!("serialised = {}", serialised);
@@ -31,11 +30,16 @@ fn main() {
     let deserialised: Point = serde_json::from_str(&serialised).unwrap();
     println!("deserialised = {:?}", deserialised);
 
-    //let poem = fs::read_to_string(Path::new("~/.config/arst/poem.txt")).expect("Couldn't read any file.");
-
-    let mut file = File::open("~/.config/arst/poem.txt").expect("Couldn't Open File");
+    let fullpath =
+        home::home_dir().unwrap().to_str().unwrap().to_owned() + "/.config/arst/poem.txt";
+    let fullpath2 = fullpath.clone();
+    let mut file = File::open(fullpath).expect("Couldn't Open File");
     let mut poem = String::new();
     file.read_to_string(&mut poem)
         .expect("Unable to read contents");
     println!("Poem: \n\n{}", poem);
+    let poem2 = poem.clone();
+    let poem3 = poem + &poem2;
+    let mut writefile = File::create(fullpath2).expect("unable to open file");
+    write!(writefile, "{}", poem3).expect("unable to write file");
 }
